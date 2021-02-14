@@ -229,7 +229,8 @@ class HeroNode {
      * 前序遍历的方法
      */
     public void preOrder() {
-        // 输出父结点System.out.println(this);
+        // 输出父结点
+        System.out.println(this);
 
         // 递归向左子树前序遍历
         if (this.left != null) {
