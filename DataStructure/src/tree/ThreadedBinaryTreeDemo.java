@@ -9,7 +9,6 @@ package tree;
  */
 public class ThreadedBinaryTreeDemo {
     public static void main(String[] args) {
-
         /*
          *     1
          *    / \
