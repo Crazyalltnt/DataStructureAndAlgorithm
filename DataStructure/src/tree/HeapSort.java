@@ -1,7 +1,6 @@
 package tree;
 
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  * 堆排序
@@ -34,7 +33,6 @@ public class HeapSort {
         long endTime = System.currentTimeMillis();
 
         System.out.println("排序后");
-        Date endDate = new Date();
         System.out.println("array = " + Arrays.toString(array));
 
         //输出程序运行时间
