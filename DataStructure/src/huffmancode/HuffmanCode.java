@@ -24,10 +24,8 @@ public class HuffmanCode {
         System.out.println("压缩率为 " + (100 - 100 * (float)huffmanCodeBytes.length / contentBytes.length) + "%");
 
         // 测试解码方法
-        decode(huffmanCodes, huffmanCodeBytes);
-
-        System.out.println("byte -1 是 " + Integer.toBinaryString(-1));
-        System.out.println("byte -1 是 " + Integer.toBinaryString((byte)-1));
+        byte[] sourceBytes = decode(huffmanCodes, huffmanCodeBytes);
+        System.out.println("原来的字符串为 " + new String(sourceBytes));
 
 /*        // 分步测试压缩
         List<Node> nodes = getNodes(contentBytes);
@@ -222,7 +220,6 @@ public class HuffmanCode {
             } else {
                 byteString = stringBuilder.substring(i, i + lengthOfByte);
             }
-            System.out.println("byteString = " + byteString);
             huffmanCodeBytes[index] = (byte)Integer.parseInt(byteString, 2);
             index++;
         }
@@ -240,6 +237,8 @@ public class HuffmanCode {
         List<Node> nodes = getNodes(bytes);
         // 创建huffman树
         Node huffmanTreeRoot = createHuffmanTree(nodes);
+        System.out.println("前序遍历");
+        preOrder(huffmanTreeRoot);
         // 生成对应的huffman编码表
         Map<Byte, String> huffmanCodes = getCodes(huffmanTreeRoot);
         // 根据编码表压缩字节数组
@@ -264,7 +263,7 @@ public class HuffmanCode {
     private static String byteToBitString(boolean flag, byte b) {
         // 使用整型变量保存b
         int temp = b;
-        // 如果是正数还存在补高位
+        // 如果是正数还存在补高位,toBinaryString从第一个非0开始返回，8位截断会不够，所以在8位前一位与1取或，即与256按位与
         if (flag) {
             // 按位或256，计算机内补码运算，以第一个 -88 为例
             // 00000000 00000000 00000001 00000000 | 11111111 11111111 11111111 10101000
@@ -272,9 +271,7 @@ public class HuffmanCode {
             temp |= 256;
         }
 
-        System.out.println("temp = " + temp);
         String bitString = Integer.toBinaryString(temp);
-        System.out.println("bitString = " + bitString);
 
         if (flag) {
             return bitString.substring(bitString.length() - 8);
@@ -284,7 +281,7 @@ public class HuffmanCode {
     }
 
     /**
-     * 解码
+     * 解码，将根据哈夫曼编码表将压缩后的字节数组还原成压缩前的字节数组
      *
      * @param huffmanCodes 哈夫曼编码表
      * @param huffmanCodeBytes 哈夫曼编码压缩得到的字节数组
@@ -297,8 +294,40 @@ public class HuffmanCode {
             boolean flag = (i != huffmanCodeBytes.length - 1);
             stringBuilder.append(byteToBitString(flag, huffmanCodeBytes[i]));
         }
-        System.out.println("二进制字符串：" + stringBuilder);
-        return null;
+        // System.out.println("二进制字符串：" + stringBuilder);
+
+        // 将字符串按照哈夫曼编码表解码
+        Map<String, Byte> map = new HashMap<>();
+        for (Map.Entry<Byte, String> entry : huffmanCodes.entrySet()) {
+            map.put(entry.getValue(), entry.getKey());
+        }
+        // System.out.println("map = " + map);
+
+        List<Byte> list = new ArrayList<>();
+        for (int i = 0; i < stringBuilder.length();) {
+            int count = 1;
+            boolean flag = true;
+            Byte b = null;
+
+            while (flag) {
+                // 取出一个0或1
+                String key = stringBuilder.substring(i, i + count);
+                b = map.get(key);
+                if (b == null) {
+                    count++;
+                } else {
+                    flag = false;
+                }
+            }
+            list.add(b);
+            i += count;
+        }
+
+        byte[] bytes = new byte[list.size()];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = list.get(i);
+        }
+        return bytes;
     }
 }
 
