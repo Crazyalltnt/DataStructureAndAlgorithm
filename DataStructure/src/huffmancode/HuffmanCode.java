@@ -169,8 +169,10 @@ public class HuffmanCode {
      * "1010100010111111110010001011111111001000101111111100100101001101110001110000011011
      * 101000111100101000101111111100110001001010011011100"
      * => 对应的 byte[] huffmanCodeBytes，即 8位对应一个 byte,放入到 huffmanCodeBytes
-     * huffmanCodeBytes[0] =  10101000(补码)
-     * => byte  [推导 10101000 => 10101000 - 1 => 10100111(反码)=> 11011000(原码)= -88
+     * 以 huffmanCodeBytes[0] 为例
+     * 00000000000000000000000010101000（168,32位）-补码-> 00000000000000000000000010101000（正数补码和反码一样）
+     * -（转byte截断8位，最高位符号位）->10101000（反码形式） -原码-> 11011000 = -88
+     * 所以 huffmanCodeBytes[0] = -88
      *
      * @param bytes 原始字符串对应的 byte[] 数组
      * @param huffmanCodes 生成的哈夫曼编码表
@@ -207,10 +209,7 @@ public class HuffmanCode {
             } else {
                 byteString =stringBuilder.substring(i, i + lengthOfByte);
             }
-            System.out.println("byteString = " + byteString);
-            System.out.println("Integer.parseInt(byteString, 2) = " + Integer.parseInt(byteString, 2));
             huffmanCodeBytes[index] = (byte)Integer.parseInt(byteString, 2);
-            System.out.println("huffmanCodeBytes[index] = " + huffmanCodeBytes[index]);
             index++;
         }
 
