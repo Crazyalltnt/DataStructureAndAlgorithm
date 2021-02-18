@@ -16,7 +16,12 @@ public class HuffmanCode {
         String sourceFile = "./DataStructure/src/huffmancode/src.jpg";
         String destinationFile = "./DataStructure/src/huffmancode/dest.zip";
         zipFile(sourceFile, destinationFile);
-        System.out.println("压缩文件成功");
+
+
+        // 测试解压文件
+        String zipFile = "./DataStructure/src/huffmancode/dest.zip";
+        String unzipFile = "./DataStructure/src/huffmancode/unzip.jpg";
+        unZipFile(zipFile, unzipFile);
 
 /*        String content = "i like like like java do you like a java";
         byte[] contentBytes = content.getBytes();
@@ -192,7 +197,7 @@ public class HuffmanCode {
      * -（转byte截断8位，最高位符号位）->10101000（反码形式） -原码-> 11011000 = -88
      * 所以 huffmanCodeBytes[0] = -88
      *
-     * @param contentBytes        原始字符串对应的 byte[] 数组
+     * @param contentBytes 原始字符串对应的 byte[] 数组
      * @param huffmanCodes 生成的哈夫曼编码表
      * @return 哈夫曼编码处理后的 byte[]
      */
@@ -244,12 +249,11 @@ public class HuffmanCode {
         List<Node> nodes = getNodes(bytes);
         // 创建huffman树
         Node huffmanTreeRoot = createHuffmanTree(nodes);
-        System.out.println("前序遍历");
-        preOrder(huffmanTreeRoot);
+        // System.out.println("前序遍历");
+        // preOrder(huffmanTreeRoot);
         // 生成对应的huffman编码表
         Map<Byte, String> huffmanCodes = getCodes(huffmanTreeRoot);
         // 根据编码表压缩字节数组
-
         return zip(bytes, huffmanCodes);
     }
 
@@ -290,7 +294,7 @@ public class HuffmanCode {
     /**
      * 解码，将根据哈夫曼编码表将压缩后的字节数组还原成压缩前的字节数组
      *
-     * @param huffmanCodes 哈夫曼编码表
+     * @param huffmanCodes     哈夫曼编码表
      * @param huffmanCodeBytes 哈夫曼编码压缩得到的字节数组
      * @return 原来的字符串对应的字节数组
      */
@@ -301,17 +305,16 @@ public class HuffmanCode {
             boolean flag = (i != huffmanCodeBytes.length - 1);
             stringBuilder.append(byteToBitString(flag, huffmanCodeBytes[i]));
         }
-        // System.out.println("二进制字符串：" + stringBuilder);
 
         // 将字符串按照哈夫曼编码表解码
         Map<String, Byte> map = new HashMap<>();
+
         for (Map.Entry<Byte, String> entry : huffmanCodes.entrySet()) {
             map.put(entry.getValue(), entry.getKey());
         }
-        // System.out.println("map = " + map);
 
         List<Byte> list = new ArrayList<>();
-        for (int i = 0; i < stringBuilder.length();) {
+        for (int i = 0; i < stringBuilder.length(); ) {
             int count = 1;
             boolean flag = true;
             Byte b = null;
@@ -340,7 +343,7 @@ public class HuffmanCode {
     /**
      * 压缩文件
      *
-     * @param sourceFile  待压缩源文件路径
+     * @param sourceFile      待压缩源文件路径
      * @param destinationFile 压缩后文件的路径
      */
     public static void zipFile(String sourceFile, String destinationFile) {
@@ -352,12 +355,8 @@ public class HuffmanCode {
         try {
             sourceFileInputStream = new FileInputStream(sourceFile);
             byte[] fileBytes = new byte[sourceFileInputStream.available()];
-            int readFlag = sourceFileInputStream.read(fileBytes);
-            if (readFlag == -1) {
-                System.out.println("读取完成");
-            } else {
-                System.out.println("读取不全");
-            }
+            int readNumber = sourceFileInputStream.read(fileBytes);
+            System.out.println("读取了 " + readNumber + " 个字节的数据");
             // 获取文件对应的哈夫曼编码表
             byte[] huffmanBytes = huffmanZip(fileBytes);
             // 输出流生成目标压缩文件
@@ -367,6 +366,7 @@ public class HuffmanCode {
             destinationObjectOutputStream.writeObject(huffmanBytes);
             // 以对象流方式写入哈夫曼编码，解压恢复源文件需要使用
             destinationObjectOutputStream.writeObject(huffmanCodes);
+            System.out.println("压缩文件成功");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -382,6 +382,71 @@ public class HuffmanCode {
             }
         }
     }
+
+    /**
+     * 解压文件
+     *
+     * @param zipFile   压缩文件
+     * @param unzipFile 解压后的文件
+     */
+    public static void unZipFile(String zipFile, String unzipFile) {
+        // 定义文件输入流
+        FileInputStream inputStream = null;
+        // 定义对象输入流
+        ObjectInputStream objectInputStream = null;
+        // 定义文件输出流
+        OutputStream outputStream = null;
+
+        try {
+            inputStream = new FileInputStream(zipFile);
+            // 创建一个和文件输入流关联的对象输入流
+            objectInputStream = new ObjectInputStream(inputStream);
+            // 读取byte数组huffmanBytes
+            byte[] huffmanBytes = (byte[])objectInputStream.readObject();
+            // 读取哈夫曼编码表
+            // Map<Byte, String> huffmanCodes = (Map<Byte, String>)objectInputStream.readObject();
+            Map<Byte, String> huffmanCodes = castHashMap(objectInputStream.readObject(), Byte.class, String.class);
+            // 解码
+            byte[] bytes = decode(huffmanCodes, huffmanBytes);
+            // 写入解压文件
+            outputStream = new FileOutputStream(unzipFile);
+            outputStream.write(bytes);
+            System.out.println("解压文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert outputStream != null;
+                objectInputStream.close();
+                outputStream.close();
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * @param obj 待转换对象
+     * @param clazz1 HashMap的key
+     * @param clazz2 HashMap的value
+     * @param <K> key泛型
+     * @param <V> value泛型
+     * @return 转换后的对象
+     */
+    public static <K,V> HashMap<K,V> castHashMap(Object obj, Class<K> clazz1, Class<V> clazz2)
+    {
+        HashMap<K,V> result = new HashMap<>();
+        if(obj instanceof HashMap<?,?>)
+        {
+            for (Object o : ((HashMap<?, ?>) obj).keySet()) {
+                result.put(clazz1.cast(o),clazz2.cast(((HashMap<?, ?>) obj).get(o)));
+            }
+            return result;
+        }
+        return null;
+    }
+
 }
 
 /**
