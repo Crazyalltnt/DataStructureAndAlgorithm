@@ -29,7 +29,7 @@ public class BinarySortTreeDemo {
         binarySortTree.infixOrder();
 
         // 测试删除结点
-        binarySortTree.deleteNode(1);
+        binarySortTree.deleteNode(7);
         System.out.println("删除结点后");
         binarySortTree.infixOrder();
     }
@@ -90,6 +90,11 @@ class BinarySortTree {
         }
     }
 
+    /**
+     * 删除结点
+     *
+     * @param value 待删除结点
+     */
     public void deleteNode(int value) {
         if (root == null) {
             return;
@@ -116,6 +121,7 @@ class BinarySortTree {
             }
         } else if (targetNode.left != null && targetNode.right != null) {
             // 删除有两棵子树的结点
+            targetNode.value = delRightTreeMin(targetNode.right);
         } else {
             // 删除只有一棵子树的结点
             // 结点有左子树
@@ -138,6 +144,23 @@ class BinarySortTree {
                 }
             }
         }
+    }
+
+    /**
+     * 查找以node为根结点的二叉排序树的最小结点的值，删除并返回
+     *
+     * @param node 传入的结点，当作根结点
+     * @return 以node为根结点的二叉排序树的最小结点的值
+     */
+    public int delRightTreeMin(Node node) {
+        Node target = node;
+        // 循环查找左子结点，找到最小值
+        while (target.left != null) {
+            target = target.left;
+        }
+        // 删除最小结点
+        deleteNode(target.value);
+        return target.value;
     }
 }
 
