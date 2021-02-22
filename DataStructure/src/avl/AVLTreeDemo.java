@@ -10,7 +10,9 @@ package avl;
 public class AVLTreeDemo {
     public static void main(String[] args) {
         // int[] array = {4, 3, 6, 5, 7, 8};
-        int[] array = {10, 12, 8, 9, 7, 6};
+        // int[] array = {10, 12, 8, 9, 7, 6};
+        int[] array = {10, 11, 7, 6, 8, 9};
+
         // 创建一个AVLTree对象
         AVLTree avlTree = new AVLTree();
         for (int j : array) {
@@ -21,13 +23,13 @@ public class AVLTreeDemo {
         avlTree.infixOrder();
 
         /*
-         *        4                    10
-         *      /   \                /    \
-         *     3     6              8     12
-         *          / \            / \
-         *         5   7          7   9
-         *              \        /
-         *               8      6
+         *     4                    10              10
+         *   /   \                /    \          /    \
+         *  3     6              8     12        7     11
+         *       / \            / \             / \
+         *      5   7          7   9           6   8
+         *           \        /                     \
+         *            8      6                       9
          * */
         System.out.println("平衡处理：");
         System.out.println("树的高度=" + avlTree.getRoot().height());
@@ -271,10 +273,17 @@ class Node {
 
         // 添加完结点后转为avl树
         if (rightHeight() - leftHeight() > 1) {
+            if (right != null && right.leftHeight() > right.rightHeight()) {
+                right.rightRotate();
+            }
             leftRotate();
+            return;
         }
 
         if (leftHeight() - rightHeight() > 1) {
+            if (left != null && left.rightHeight() > left.leftHeight()) {
+                left.leftRotate();
+            }
             rightRotate();
         }
     }
