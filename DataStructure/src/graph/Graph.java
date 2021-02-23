@@ -2,6 +2,7 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 /**
  * 图
@@ -51,7 +52,9 @@ public class Graph {
         graph.showGraphMatrix();
 
         // 测试深度优先遍历
-        graph.dfs();
+        // graph.dfs();
+        graph.bfs();
+
     }
 
     /**
@@ -157,7 +160,7 @@ public class Graph {
     /**
      * 深度优先遍历
      *
-     * @param accessed 访问标记
+     * @param accessed    访问标记
      * @param vertexIndex 当前结点下标
      */
     private void dfs(boolean[] accessed, int vertexIndex) {
@@ -176,12 +179,55 @@ public class Graph {
     }
 
     /**
-     * 深度遍历所有节点
+     * 深度优先遍历所有节点
      */
     public void dfs() {
         for (int i = 0; i < getNumberOfVertex(); i++) {
             if (!accessed[i]) {
                 dfs(accessed, i);
+            }
+        }
+    }
+
+    /**
+     * 广度优先遍历
+     *
+     * @param accessed    访问标记
+     * @param vertexIndex 当前结点下标
+     */
+    private void bfs(boolean[] accessed, int vertexIndex) {
+        // 头节点下标
+        int headVertexIndex;
+        // 邻接结点
+        int neighborVertexIndex;
+        // 队列记录访问顺序
+        LinkedList<Integer> queue = new LinkedList<>();
+        // 访问结点
+        System.out.print(getValueByIndex(vertexIndex) + "->");
+        accessed[vertexIndex] = true;
+        queue.addLast(vertexIndex);
+
+        while (!queue.isEmpty()) {
+            headVertexIndex = queue.removeFirst();
+            neighborVertexIndex = getFirstNeighbor(headVertexIndex);
+            while (neighborVertexIndex != -1) {
+                if (!accessed[neighborVertexIndex]) {
+                    System.out.print(getValueByIndex(neighborVertexIndex) + "->");
+                    accessed[neighborVertexIndex] = true;
+                    queue.addLast(neighborVertexIndex);
+                }
+                neighborVertexIndex = getNextNeighbor(headVertexIndex, neighborVertexIndex);
+            }
+        }
+    }
+
+    /**
+     * 广度优先遍历所有节点
+     */
+    public void bfs() {
+        for (int i = 0; i < getNumberOfVertex(); i++) {
+            if (!accessed[i]) {
+                bfs(accessed, i);
             }
         }
     }
