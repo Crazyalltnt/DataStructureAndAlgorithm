@@ -31,8 +31,9 @@ public class Graph {
 
     public static void main(String[] args) {
         // 测试图创建
-        int numberOfVertexes = 5;
-        String[] vertexesArray = {"A", "B", "C", "D", "E"};
+        // String[] vertexesArray = {"A", "B", "C", "D", "E"};
+        String[] vertexesArray = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        int numberOfVertexes = vertexesArray.length;
         Graph graph = new Graph(numberOfVertexes);
 
         // 添加顶点
@@ -42,17 +43,30 @@ public class Graph {
 
         // 添加边
         // A-B A-C B-C B-D B-E
+        // graph.insertEdge(0, 1, 1);
+        // graph.insertEdge(0, 2, 1);
+        // graph.insertEdge(1, 2, 1);
+        // graph.insertEdge(1, 3, 1);
+        // graph.insertEdge(1, 4, 1);
+
+        //更新边的关系
         graph.insertEdge(0, 1, 1);
         graph.insertEdge(0, 2, 1);
-        graph.insertEdge(1, 2, 1);
         graph.insertEdge(1, 3, 1);
         graph.insertEdge(1, 4, 1);
+        graph.insertEdge(3, 7, 1);
+        graph.insertEdge(4, 7, 1);
+        graph.insertEdge(2, 5, 1);
+        graph.insertEdge(2, 6, 1);
+        graph.insertEdge(5, 6, 1);
 
         // 显示
         graph.showGraphMatrix();
 
-        // 测试深度优先遍历
+        // 测试深度优先遍历 1->2->4->8->5->3->6->7
         // graph.dfs();
+
+        // 测试广度优先遍历 1->2->3->4->5->6->7->8
         graph.bfs();
 
     }
