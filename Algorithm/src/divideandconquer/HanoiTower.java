@@ -1,4 +1,4 @@
-package dac;
+package divideandconquer;
 
 /**
  * 分治算法解决汉诺塔问题
