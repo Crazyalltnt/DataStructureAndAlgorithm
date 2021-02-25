@@ -16,7 +16,7 @@ public class ViolenceMatch {
      * 暴力匹配字符串
      *
      * @param string1 长字符串
-     * @param string2 待匹配字串
+     * @param string2 待匹配子串
      * @return 匹配到的子串索引
      */
     public static int violenceMatch(String string1, String string2) {
