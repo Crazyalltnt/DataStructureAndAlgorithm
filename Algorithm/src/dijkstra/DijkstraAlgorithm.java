@@ -11,6 +11,24 @@ import java.util.Arrays;
  */
 public class DijkstraAlgorithm {
     public static void main(String[] args) {
+        char[] vertex = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+        // 邻接矩阵
+        int[][] matrix = new int[vertex.length][vertex.length];
+        final int N = 65535;// 表示不可以连接
+        matrix[0] = new int[] {N, 5, 7, N, N, N, 2};
+        matrix[1] = new int[] {5, N, N, 9, N, N, 3};
+        matrix[2] = new int[] {7, N, N, N, 8, N, N};
+        matrix[3] = new int[] {N, 9, N, N, N, 4, N};
+        matrix[4] = new int[] {N, N, 8, N, N, 5, 4};
+        matrix[5] = new int[] {N, N, N, 4, 5, N, 6};
+        matrix[6] = new int[] {2, 3, N, N, 4, 6, N};
+        // 创建 Graph对象
+        Graph graph = new Graph(vertex, matrix);
+        // 测试, 看看图的邻接矩阵是否ok
+        graph.showGraph();
+        // 测试迪杰斯特拉算法
+        graph.dijkstra(6);//C
+        graph.showDijkstra();
 
     }
 }
@@ -19,11 +37,11 @@ class Graph {
     /**
      * 顶点数组
      */
-    private char[] vertex;
+    private final char[] vertex;
     /**
      * 邻接矩阵
      */
-    private int[][] matrix;
+    private final int[][] matrix;
     /**
      * 已访问顶点集合
      */
@@ -74,7 +92,7 @@ class Graph {
      */
     public void update(int index) {
         // 出发顶点到index顶点的距离
-        int distance = 0;
+        int distance;
         for (int i = 0; i < matrix[index].length; i++) {
             distance = visitedVertex.getDistance(index) + matrix[index][i];
             if (!visitedVertex.visited(i) && distance < visitedVertex.getDistance(i)) {
@@ -112,7 +130,7 @@ class VisitedVertex {
         this.distance = new int[numberOfVertexes];
 
         // 初始化distance数组
-        Arrays.fill(distance, Integer.MAX_VALUE);
+        Arrays.fill(distance, 65535);
         // 设置出发顶点被访问过
         this.visited[index] = 1;
         // 设置出发顶点的访问距离为0
@@ -165,10 +183,10 @@ class VisitedVertex {
      * @return 新的访问顶点
      */
     public int updateVisited() {
-        int minDistance = Integer.MAX_VALUE;
+        int minDistance = 65535;
         int index = 0;
         for (int i = 0; i < visited.length; i++) {
-            if (visited[index] == 0 && distance[i] < minDistance) {
+            if (visited[i] == 0 && distance[i] < minDistance) {
                 minDistance = distance[i];
                 index = i;
             }
@@ -178,22 +196,34 @@ class VisitedVertex {
         return index;
     }
 
+    /**
+     * 显示结果
+     */
     public void show() {
-        System.out.println("======================================");
+        System.out.println("===========================");
         // 输出visited
+        System.out.println("visited数组：");
         for (int i : visited) {
             System.out.print(i + " ");
         }
         System.out.println();
-        // 输出visited
+        // 输出preVisited
+        System.out.println("preVisited数组：");
         for (int i : preVisited) {
             System.out.print(i + " ");
         }
         System.out.println();
-        char[] vertex = {'A','B','C', 'D','E','F','G'};
+        //输出distance
+        System.out.println("distance数组");
+        for(int i : distance) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+        System.out.println("距离");
+        char[] vertex = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
         int count = 0;
         for (int i : distance) {
-            if (i != Integer.MAX_VALUE) {
+            if (i != 65535) {
                 System.out.print(vertex[count] + "(" + i + ")");
             } else {
                 System.out.println("N");
